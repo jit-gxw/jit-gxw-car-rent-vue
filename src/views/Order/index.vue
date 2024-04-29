@@ -395,9 +395,31 @@ const deleteHandle=async (id)=>{
             </el-table-column>
 
             
+            
 
             <el-table-column label="操作" width="140" fixed="right">
                 <template v-slot="scope">
+
+
+                  <el-tooltip
+                     class="box-item"
+                     effect="dark"
+                     :content="scope.row.infoByUser"
+                     placement="top"
+                     v-if="scope.row.infoByUser!=null&(scope.row.status==2||scope.row.status==3||scope.row.status==4)"
+                   >
+                   <el-button type="success"
+                       size="small"
+                       round
+                       v-if="scope.row.infoByUser!=null&(scope.row.status==2||scope.row.status==3||scope.row.status==4)"
+                       style="float:left"
+                
+                       >
+                    故障
+                 </el-button>
+                   </el-tooltip>
+
+                  
 
 
                 
@@ -431,6 +453,7 @@ const deleteHandle=async (id)=>{
                        >
                     还车
                  </el-button>
+                 
 
                  <el-button type="success"
                        size="small"
@@ -770,6 +793,8 @@ const deleteHandle=async (id)=>{
                 <el-input v-model.number="ConfirmAmountDate.extraCharges" minlength="1" maxlength="5" placeholder="单位：元"></el-input>
             </el-form-item>
       </el-form>
+
+      
        
 
 

@@ -6,7 +6,10 @@ import {
 import { ref } from 'vue'
 import {ElMessage} from "element-plus"
 import {pageFaultService,startRepairService,completeRepairService,failRepairService,deleteRepairService} from '@/api/fault'
+import{useCurrentUserDataStore} from '@/store/currentUser'
+const currentUserDataStore=useCurrentUserDataStore();
 /* ------------------------------------------------------初始化数据模型 */
+const currentUserData=currentUserDataStore.currentUserData;
 //车辆数据
 const faultData = ref([])
 //详情数据模型
@@ -100,6 +103,17 @@ const startRepair=async (rowId)=>{
         pageList()
     }).catch((err) => {
         ElMessage.error("开始维修失败！")
+    });
+    }
+}
+const pass=async (rowId)=>{
+    if (confirm('确认审核?', '提示')){
+    await startRepairService({id:rowId})
+    .then((result) => {
+        ElMessage.success("审核通过！")
+        pageList()
+    }).catch((err) => {
+        ElMessage.error("审核失败！")
     });
     }
 }
@@ -221,6 +235,7 @@ const deleteHandle=async (id)=>{
                   <el-option label="维修中" value=1 />
                   <el-option label="完成" value=2 />
                   <el-option label="失败" value=3 />
+                  <el-option label="待审核" value=4 />
                 </el-select>
                 
 
@@ -265,7 +280,7 @@ const deleteHandle=async (id)=>{
             <el-table-column label="当前维修状态" prop="status">
                 <template v-slot="scope">
                 
-                {{scope.row.status===0?"待维修":scope.row.status===1?"维修中":scope.row.status===2?"完成":"失败"}}
+                {{scope.row.status===0?"待维修":scope.row.status===1?"维修中":scope.row.status===2?"完成":scope.row.status===4?"待审核":"失败"}}
 
                 
                 </template>
@@ -282,6 +297,18 @@ const deleteHandle=async (id)=>{
                        >
                     维修
                  </el-button>
+
+                
+                <el-button type="warning"
+                       size="small"
+                       round
+                       v-if="scope.row.status===4&&currentUserData.roleId===1"
+                       style="float:center"
+                       @click="pass(scope.row.id)"
+                       >
+                    审核
+                 </el-button>
+                
 
                  <el-button type="success"
                        size="small"
@@ -409,7 +436,7 @@ const deleteHandle=async (id)=>{
                 维修状态：
               </div>
             </template>
-           {{detailDataModel.status===0?"待维修":detailDataModel.status===1?"维修中":detailDataModel.status===2?"完成":"失败"}}
+           {{detailDataModel.status===0?"待维修":detailDataModel.status===1?"维修中":detailDataModel.status===2?"完成":detailDataModel.status===4?"待审核":"失败"}}
           </el-descriptions-item>
 
           <el-descriptions-item min-width="150px">

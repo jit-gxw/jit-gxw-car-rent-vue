@@ -21,8 +21,8 @@ const currentUserDataStore=useCurrentUserDataStore();
 
 //定义数据模型
 const loginData = ref({
-    username:'admin',
-    password:'123456'
+    username:'',
+    password:''
 })
 
 //定义表单校验规则
